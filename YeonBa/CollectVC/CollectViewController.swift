@@ -9,8 +9,9 @@ import UIKit
 import SnapKit
 import Tabman
 import Pageboy
+import Alamofire
 
-class CollectViewController: TabmanViewController {
+class CollectViewController: TabmanViewController {    
     private var viewcontrollers : Array<UIViewController> = []
     private var tabbar =  TMBar.ButtonBar().then {
         $0.backgroundView.style = .clear
@@ -24,7 +25,7 @@ class CollectViewController: TabmanViewController {
         $0.indicator.tintColor = UIColor.primary
     }
     private lazy var containerView =  UIView().then {
-        $0.backgroundColor = UIColor(named: "gray2")
+        $0.backgroundColor = .clear
     }
     override func viewDidLoad() {
         super.viewDidLoad()

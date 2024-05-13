@@ -3,11 +3,7 @@
 <plist version="1.0">
 <dict>
   <key>CFBundleDevelopmentRegion</key>
-<<<<<<< HEAD
   <string>${PODS_DEVELOPMENT_LANGUAGE}</string>
-=======
-  <string>en</string>
->>>>>>> 13608ecdfdbb2ce66546b069fb9e81dab84c227f
   <key>CFBundleExecutable</key>
   <string>${EXECUTABLE_NAME}</string>
   <key>CFBundleIdentifier</key>
