@@ -16,11 +16,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else {return}
         window = UIWindow(frame: UIScreen.main.bounds)
         
-        let viewController = SignUpViewController()
+        let viewController = SplashViewController()
 
         let navigationController = BaseNavigationController(rootViewController: viewController)
-        
-        let expirationDateString = KeychainHandler.shared.accessToken
         
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()

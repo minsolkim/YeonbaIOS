@@ -14,4 +14,5 @@ final class NetworkService {
     
     let signUpService : SignUpServiceProtocol = SignUpService( apiLogger: APIEventLogger())
     let loginService : LoginServiceProtocol = LoginService( apiLogger: APIEventLogger())
+    let notificationService : NotificationServiceProtocol = NotificationService( apiLogger: APIEventLogger())
 }

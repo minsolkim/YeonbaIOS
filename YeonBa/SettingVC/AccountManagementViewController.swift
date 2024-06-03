@@ -1,4 +1,5 @@
 import UIKit
+import SwiftKeychainWrapper
 
 class AccountManagementViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     var tableView: UITableView!
@@ -29,7 +30,7 @@ class AccountManagementViewController: UIViewController, UITableViewDelegate, UI
 
     // UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return 3
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -39,6 +40,8 @@ class AccountManagementViewController: UIViewController, UITableViewDelegate, UI
             cell.textLabel?.text = "휴면계정 전환"
         case 1:
             cell.textLabel?.text = "서비스 탈퇴"
+        case 2:
+            cell.textLabel?.text = "로그아웃"
         default:
             cell.textLabel?.text = "Unknown"
         }
@@ -59,6 +62,8 @@ class AccountManagementViewController: UIViewController, UITableViewDelegate, UI
             presentHumanMemberSwitchAlert()
         case 1:
             presentServiceWithdrawalAlert()
+        case 2:
+            presentServiceWithLogout()
         default:
             print("Selected row at \(indexPath.row)")
         }
@@ -88,4 +93,19 @@ class AccountManagementViewController: UIViewController, UITableViewDelegate, UI
        
        present(alert, animated: true, completion: nil)
    }
+    func presentServiceWithLogout() {
+        let alert = UIAlertController(title: "서비스 로그아웃 확인", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
+        let confirmAction = UIAlertAction(title: "로그아웃", style: .destructive) { action in
+//            KeychainHandler.shared.clearTokens()
+            let signupVC = SignUpViewController()
+            self.navigationController?.pushViewController(signupVC, animated: true)
+            print("로그아웃 처리")
+        }
+        alert.addAction(confirmAction)
+        
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
 }

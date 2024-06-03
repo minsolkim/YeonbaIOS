@@ -110,8 +110,26 @@ class HomeViewController: UIViewController {
         let heartCountBarButton = UIBarButtonItem(customView: heartCountLabel)
         
         let alarmButton = UIBarButtonItem(image: UIImage(named: "Alarm"), style: .plain, target: self, action: #selector(alarmButtonTapped))
-        
         navigationItem.rightBarButtonItems = [alarmButton, heartCountBarButton, heartButton]
+        NetworkService.shared.notificationService.UnreadNotification() { response in
+            switch response {
+            case .success(let data):
+                guard let data = data.data else { return }
+                if data.exist {
+                    DispatchQueue.main.async {
+                        alarmButton.image = UIImage(named: "AlarmActive")
+                        print("읽지 않은 알람 존재 \(data.exist)")
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        alarmButton.image = UIImage(named: "Alarm")
+                    }
+                }
+                
+            default:
+                print("알람 존재하지 않음")
+            }
+        }
         
     }
     func configureTableView() {

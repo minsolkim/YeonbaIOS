@@ -7,14 +7,11 @@ class LocalSelectViewController: UIViewController, UIPickerViewDelegate, UIPicke
     
     var selectedLocal: String? {
         didSet {
-            // 선택된 지역을 버튼의 타이틀로 설정
             localPickerButton.setTitle(selectedLocal, for: .normal)
-            // 피커 뷰를 숨기는 로직을 여기에 추가할 수 있습니다.
             localPicker.isHidden = true
         }
     }
-    
-    
+
     var localTitleLabel: UILabel!
     
     let localPicker = UIPickerView()
@@ -59,18 +56,14 @@ class LocalSelectViewController: UIViewController, UIPickerViewDelegate, UIPicke
         localPicker.isHidden = true
         localPicker.delegate = self
         localPicker.dataSource = self
+        
+
     }
     
     private func setupLayout() {
         view.backgroundColor = .white
         navigationItem.title = "나의 정보"
-        
-        view.addSubview(numberLabel)
-        view.addSubview(instructionLabel)
-        view.addSubview(localPickerButton)
-        view.addSubview(localPicker)
-        view.addSubview(nextButton)
-        
+        view.addSubviews(numberLabel,instructionLabel,localPickerButton,localPicker,nextButton)
         
         numberLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(70)
@@ -124,21 +117,19 @@ class LocalSelectViewController: UIViewController, UIPickerViewDelegate, UIPicke
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return locals.count // 지역 배열의 크기를 반환합니다.
+        return locals.count
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return locals[row] // 해당 행의 지역 이름을 반환합니다.
+        return locals[row]
     }
     
     
     @objc private func showLocalPicker() {
-        // 피커 뷰를 표시합니다.
         localPicker.isHidden = false
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        // 사용자가 선택한 지역을 버튼에 설정하고 피커 뷰를 숨깁니다.
         localPickerButton.setTitle(locals[row], for: .normal)
         localPicker.isHidden = true
         selectedLocal = locals[row]

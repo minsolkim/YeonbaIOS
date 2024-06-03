@@ -1,3 +1,10 @@
+//
+//  SignDataManager.swift
+//  YeonBa
+//
+//  Created by 김민솔 on 5/3/24.
+//
+
 import Foundation
 import SwiftKeychainWrapper
 
@@ -6,26 +13,22 @@ class SignDataManager {
     
     private init() {}
     var selectedImages: [UIImage] = []
-    var profilePhotos: [Data]? {
+    var profilePhotos : [Data]? = []
+    var selfieImage : UIImage = UIImage()
+    
+    var confidence: Int? {
         get {
-            if let data = KeychainWrapper.standard.data(forKey: "profilePhotos") {
-                // Keychain에서 데이터를 가져와서 배열로 변환하여 반환
-                return [data]
-            } else {
-                return nil
-            }
+            return UserDefaults.standard.integer(forKey: "confidence")
         }
         set {
-            if let newValue = newValue, let firstPhotoData = newValue.first {
-                // 배열이 새로운 값을 가지고 있고, 첫 번째 요소의 데이터를 Keychain에 저장
-                KeychainWrapper.standard.set(firstPhotoData, forKey: "profilePhotos")
+            if let newValue = newValue {
+                UserDefaults.standard.set(newValue, forKey: "confidence")
             } else {
-                // 새로운 값이 nil이거나 배열이 비어 있을 경우 Keychain에서 데이터를 삭제
-                KeychainWrapper.standard.removeObject(forKey: "profilePhotos")
+                UserDefaults.standard.removeObject(forKey: "confidence")
             }
         }
     }
-    var selfieImage : UIImage = UIImage()
+    
     var socialId: Int? {
         get {
             return KeychainWrapper.standard.integer(forKey: "socialId") // keychain 반환
@@ -54,104 +57,104 @@ class SignDataManager {
     
     var phoneNumber: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "phoneNumber") // keychain 반환
+            return UserDefaults.standard.string(forKey: "phoneNumber")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "phoneNumber") //keychain 저장
+                UserDefaults.standard.set(newValue, forKey: "phoneNumber")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "phoneNumber") //keychain 삭제
+                UserDefaults.standard.removeObject(forKey: "phoneNumber")
             }
         }
     }
     
     var birthDate: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "birthDate") // keychain 반환
+            return UserDefaults.standard.string(forKey: "birthDate") // keychain 반환
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "birthDate") //keychain 저장
+                UserDefaults.standard.set(newValue, forKey: "birthDate") //keychain 저장
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "birthDate") //keychain 삭제
+                UserDefaults.standard.removeObject(forKey: "birthDate") //keychain 삭제
             }
         }
     }
     
     var nickName: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "nickName")
+            return UserDefaults.standard.string(forKey: "nickName")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "nickName")
+                UserDefaults.standard.set(newValue, forKey: "nickName")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "nickName")
+                UserDefaults.standard.removeObject(forKey: "nickName")
             }
         }
     }
     
     var gender: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "gender")
+            return UserDefaults.standard.string(forKey: "gender")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "gender")
+                UserDefaults.standard.set(newValue, forKey: "gender")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "gender")
+                UserDefaults.standard.removeObject(forKey: "gender")
             }
         }
     }
     
     var height: Int? {
         get {
-            return KeychainWrapper.standard.integer(forKey: "height")
+            return UserDefaults.standard.integer(forKey: "height")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "height")
+                UserDefaults.standard.set(newValue, forKey: "height")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "height")
+                UserDefaults.standard.removeObject(forKey: "height")
             }
         }
     }
     
     var bodyType: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "bodyType")
+            return UserDefaults.standard.string(forKey: "bodyType")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "bodyType")
+                UserDefaults.standard.set(newValue, forKey: "bodyType")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "bodyType")
+                UserDefaults.standard.removeObject(forKey: "bodyType")
             }
         }
     }
     
     var job: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "job")
+            return UserDefaults.standard.string(forKey: "job")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "job")
+                UserDefaults.standard.set(newValue, forKey: "job")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "job")
+                UserDefaults.standard.removeObject(forKey: "job")
             }
         }
     }
     
     var mbti: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "mbti")
+            return UserDefaults.standard.string(forKey: "mbti")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "mbti")
+                UserDefaults.standard.set(newValue, forKey: "mbti")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "mbti")
+                UserDefaults.standard.removeObject(forKey: "mbti")
             }
             
         }
@@ -159,158 +162,161 @@ class SignDataManager {
     
     var activityArea: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "activityArea")
+            return UserDefaults.standard.string(forKey: "activityArea")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "activityArea")
+                UserDefaults.standard.set(newValue, forKey: "activityArea")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "activityArea")
+                UserDefaults.standard.removeObject(forKey: "activityArea")
             }
         }
     }
     
     var vocalRange: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "voaclRange")
+            return UserDefaults.standard.string(forKey: "voaclRange")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "voaclRange")
+                UserDefaults.standard.set(newValue, forKey: "voaclRange")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "voaclRange")
+                UserDefaults.standard.removeObject(forKey: "voaclRange")
             }
         }
     }
     
     var lookAlikeAnimal: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "lookAlikeAnimal")
+            return UserDefaults.standard.string(forKey: "lookAlikeAnimal")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "lookAlikeAnimal")
+                UserDefaults.standard.set(newValue, forKey: "lookAlikeAnimal")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "lookAlikeAnimal")
+                UserDefaults.standard.removeObject(forKey: "lookAlikeAnimal")
             }
         }
     }
     
     var preferredAnimal:String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "preferredAnimal")
+            return UserDefaults.standard.string(forKey: "preferredAnimal")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "preferredAnimal")
+                UserDefaults.standard.set(newValue, forKey: "preferredAnimal")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "preferredAnimal")
+                UserDefaults.standard.removeObject(forKey: "preferredAnimal")
             }
         }
     }
     
     var preferredArea: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "preferredArea")
+            return UserDefaults.standard.string(forKey: "preferredArea")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "preferredArea")
+                UserDefaults.standard.set(newValue, forKey: "preferredArea")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "preferredArea")
+                UserDefaults.standard.removeObject(forKey: "preferredArea")
             }
         }
     }
     
     var preferredVocalRange: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "preferredVocalRange")
+            return UserDefaults.standard.string(forKey: "preferredVocalRange")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "preferredVocalRange")
+                UserDefaults.standard.set(newValue, forKey: "preferredVocalRange")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "preferredVocalRange")
+                UserDefaults.standard.removeObject(forKey: "preferredVocalRange")
             }
         }
     }
     
     var preferredAgeLowerBound: Int? {
         get {
-            return KeychainWrapper.standard.integer(forKey: "preferredAgeLowerBound")
+            return UserDefaults.standard.integer(forKey: "preferredAgeLowerBound")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "preferredAgeLowerBound")
+                UserDefaults.standard.set(newValue, forKey: "preferredAgeLowerBound")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "preferredAgeLowerBound")
+                UserDefaults.standard.removeObject(forKey: "preferredAgeLowerBound")
             }
         }
     }
     
     var preferredAgeUpperBound: Int? {
         get {
-            return KeychainWrapper.standard.integer(forKey: "preferredAgeUpperBound")
+            return UserDefaults.standard.integer(forKey: "preferredAgeUpperBound")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "preferredAgeUpperBound")
+                UserDefaults.standard.set(newValue, forKey: "preferredAgeUpperBound")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "preferredAgeUpperBound")
+                UserDefaults.standard.removeObject(forKey: "preferredAgeUpperBound")
             }
         }
     }
     
     var preferredBodyType: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "preferredBodyType")
+            return UserDefaults.standard.string(forKey: "preferredBodyType")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "preferredBodyType")
+                UserDefaults.standard.set(newValue, forKey: "preferredBodyType")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "preferredBodyType")
+                UserDefaults.standard.removeObject(forKey: "preferredBodyType")
             }
         }
     }
     
     var preferredHeightLowerBound: Int? {
         get {
-            return KeychainWrapper.standard.integer(forKey: "preferredHeightLowerBound")
+            return UserDefaults.standard.integer(forKey: "preferredHeightLowerBound")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "preferredHeightLowerBound")
+                UserDefaults.standard.set(newValue, forKey: "preferredHeightLowerBound")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "preferredHeightLowerBound")
+                UserDefaults.standard.removeObject(forKey: "preferredHeightLowerBound")
             }
         }
     }
     
     var preferredHeightUpperBound: Int? {
         get {
-            return KeychainWrapper.standard.integer(forKey: "preferredHeightUpperBound")
+            return UserDefaults.standard.integer(forKey: "preferredHeightUpperBound")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "preferredHeightUpperBound")
+                UserDefaults.standard.set(newValue, forKey: "preferredHeightUpperBound")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "preferredHeightUpperBound")
+                UserDefaults.standard.removeObject(forKey: "preferredHeightUpperBound")
             }
         }
     }
     
     var preferredMbti: String? {
         get {
-            return KeychainWrapper.standard.string(forKey: "preferredMbti")
+            return UserDefaults.standard.string(forKey: "preferredMbti")
         }
         set {
             if let newValue = newValue {
-                KeychainWrapper.standard.set(newValue, forKey: "preferredMbti")
+                UserDefaults.standard.set(newValue, forKey: "preferredMbti")
             } else {
-                KeychainWrapper.standard.removeObject(forKey: "preferredMbti")
+                UserDefaults.standard.removeObject(forKey: "preferredMbti")
             }
         }
     }
+//    func clearAll() {
+//        KeychainWrapper.standard.removeAllKeys()
+//    }
     
 }

@@ -16,7 +16,7 @@ class NotificationsettingsViewController: UIViewController {
     }
     
     private let detailedPushNotificationLabel = UILabel().then {
-        $0.text = "상세 용량/수량 알림"
+        $0.text = "채팅 요청/수락 알림"
         $0.font = UIFont.pretendardSemiBold(size: 20)
     }
     

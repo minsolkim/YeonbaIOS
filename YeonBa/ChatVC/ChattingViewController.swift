@@ -20,11 +20,6 @@ class ChattingViewController: UIViewController, UITableViewDataSource, UITableVi
         $0.numberOfLines = 0
         $0.font = UIFont.pretendardSemiBold(size: 20)
     }
-    
-    let titleLabel = UILabel().then{
-        $0.text = "채팅"
-        $0.font = UIFont.pretendardMedium(size: 18)
-    }
     lazy var tableView = UITableView().then {
         $0.register(ChattingListCell.self, forCellReuseIdentifier: "ChattingListCell")
         $0.dataSource = self
@@ -41,6 +36,7 @@ class ChattingViewController: UIViewController, UITableViewDataSource, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        navigationItem.title = "채팅"
         addSubViews()
         configUI()
     }
@@ -48,11 +44,11 @@ class ChattingViewController: UIViewController, UITableViewDataSource, UITableVi
          super.viewWillAppear(animated)
          self.navigationItem.hidesBackButton = true
     }
+    
 
     // MARK: - UI Layout
     private func addSubViews(){
         view.addSubview(tableView)
-        view.addSubview(titleLabel)
         /*view.addSubview(bodyStackView)
         [self.heartImage, self.contentLabel]
           .forEach(self.bodyStackView.addArrangedSubview(_:))*/
@@ -65,17 +61,12 @@ class ChattingViewController: UIViewController, UITableViewDataSource, UITableVi
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(55)
-            make.centerX.equalToSuperview()
-        }
     }
 
     // MARK: - UITableViewDataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // Return the number of notification types for simplicity
-        return 3
+        return 1
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

@@ -11,8 +11,10 @@ import Alamofire
 
 enum SignUpTarget {
     case signUp(_ bodyDTO: SignUpRequest)
+    case phoneNumberCheck(_ queryDTO: PhoneNumberRequest)
+    case nicknameCheck(_ queryDTO: NicknameRequest)
     case login(_ bodyDTO: LoginRequest)
-    case postRefreshToken(_ bodyDTO: RefreshRequest)
+    case postRefreshToken(_ queryDTO: RefreshRequest)
 }
 
 extension SignUpTarget: TargetType {
@@ -21,6 +23,10 @@ extension SignUpTarget: TargetType {
         switch self {
         case .signUp:
             return .post
+        case .phoneNumberCheck:
+            return .get
+        case .nicknameCheck:
+            return .get
         case .login:
             return .post
         case .postRefreshToken:
@@ -34,6 +40,10 @@ extension SignUpTarget: TargetType {
         switch self {
         case .signUp:
             return "/users/join"
+        case .phoneNumberCheck:
+            return "/users/phone-numbers/used"
+        case .nicknameCheck:
+            return "/users/nicknames/used"
         case .login:
             return "/users/login"
         case .postRefreshToken:
@@ -46,16 +56,24 @@ extension SignUpTarget: TargetType {
         switch self {
         case let .signUp(bodyDTO):
             return .requestWithMultipart(bodyDTO.toMultipartFormData())
+        case let .phoneNumberCheck(queryDTO):
+            return .requestQuery(queryDTO)
+        case let .nicknameCheck(queryDTO):
+            return .requestQuery(queryDTO)
         case let .login(bodyDTO):
             return .requestWithBody(bodyDTO)
-        case let .postRefreshToken(bodyDTO):
-            return .requestWithBody(bodyDTO)
+        case let .postRefreshToken(queryDTO):
+            return .requestQuery(queryDTO)
         }
     }
     
     var headerType: HTTPHeaderType {
         switch self  {
         case .signUp:
+            return .plain
+        case .phoneNumberCheck:
+            return .plain
+        case .nicknameCheck:
             return .plain
         case .login:
             return .providerToken
@@ -68,6 +86,10 @@ extension SignUpTarget: TargetType {
         switch self {
         case .signUp:
             return .authorization
+        case .phoneNumberCheck:
+            return .unauthorization
+        case .nicknameCheck:
+            return .unauthorization
         case .login:
             return .socialAuthorization
         case .postRefreshToken:

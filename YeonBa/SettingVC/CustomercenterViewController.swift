@@ -1,29 +1,31 @@
-//
-//  CustomercenterViewController.swift
-//  YeonBa
-//
-//  Created by 심규민 on 5/3/24.
-//
-
 import UIKit
+import SnapKit
+import Then
 
-class CustomercenterViewController: UITabBarController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+class CustomercenterViewController: UIViewController {
+    
+    private let emailLabel = UILabel().then {
+        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.textAlignment = .center
+        $0.font = UIFont.systemFont(ofSize: 16)
+        $0.textColor = .black
+        $0.numberOfLines = 2
+        $0.text = "앱 내에서 불편한 사항이 있을 시\n 123alsth@naver.com 연락 바랍니다."
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        setupNavigationBar()
+        setupLayout()
     }
-    */
-
+    private func setupNavigationBar() {
+        navigationItem.title = "고객 센터"
+    }
+    private func setupLayout() {
+        view.addSubview(emailLabel)
+        emailLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+    }
 }

@@ -155,100 +155,79 @@ class PhoneNumberViewController: UIViewController {
         nextButton.backgroundColor = .systemBlue
     }
     // 토큰 가져오기
-    func retrieveAccessToken() -> String? {
-        return KeychainWrapper.standard.string(forKey: "accessToken")
+//    func retrieveAccessToken() -> String? {
+//        return KeychainWrapper.standard.string(forKey: "accessToken")
+//    }
+    func getUserInfo() {
+        let loginRequest = LoginRequest (
+            socialId : SignDataManager.shared.socialId!,
+            loginType : SignDataManager.shared.loginType!,
+            phoneNumber :SignDataManager.shared.phoneNumber!
+        )
+        NetworkService.shared.loginService.login(bodyDTO: loginRequest) { [weak self] response in
+            guard let self = self else { return }
+            switch response {
+            case .success(let data):
+                guard let data = data.data else { return }
+                print("로그인 성공")
+            default:
+                print("로그인 실패")
+
+            }
+        }
     }
-    func fetchData() {
+    
+    func checkPhoneNumber() {
         guard let phoneNumber = phoneNumberTextField.text else {
             return
         }
-        // 각각의 필드값을 출력
-        print("socialId: \(socialID ?? 0)")
-        print("loginType: \(loginType ?? "")")
-        print("phoneNumber: \(phoneNumber)")
-        let endpoint = "https://api.yeonba.co.kr/users/login"
-        socialID = SignDataManager.shared.socialId
-        loginType = SignDataManager.shared.loginType
-        let parameters: [String: Any] = [
-            "socialId": socialID ?? 0,
-            "loginType": loginType ?? "",
-            "phoneNumber": phoneNumber
-        ]
-        
-        AF.request(endpoint, method: .post, parameters: parameters, encoding: JSONEncoding.default)
-            .responseJSON { [weak self] response in
-                guard let self = self else { return }
-                
-                switch response.result {
-                case .success(let value):
-                    if let httpResponse = response.response {
-                        let statusCode = httpResponse.statusCode
-                        print("Response status code: \(statusCode)")
+        let phoneNumberRequest = PhoneNumberRequest(phoneNumber: phoneNumber)
+
+        NetworkService.shared.signUpService.phoneNumberCheck(queryDTO: phoneNumberRequest) { response in
+            switch response {
+            case .success(let StatusResponse):
+                if let data = StatusResponse.data {
+                    if data.isUsedPhoneNumber {
+                        print("전화번호 이미 존재")
+                        self.showAlert(message: "전화번호가 이미 존재합니다.")
+                    } else {
+                        print("전화번호 사용 가능")
                     }
-                    if let json = value as? [String: Any] {
-                        if let status = json["status"] as? String {
-                            if status == "success" {
-                                // Handle success case
-                                if let data = json["data"] as? [String: Any],
-                                   let accessToken = data["accessToken"] as? String,
-                                   let refreshToken = data["refreshToken"] as? String {
-                                    // Save tokens to Keychain
-                                    let saveAccessToken = KeychainWrapper.standard.set(accessToken, forKey: "accessToken")
-                                    if saveAccessToken {
-                                        print("AccessToken: \(accessToken)")
-                                        print("Access token saved successfully.")
-                                    } else {
-                                        print("Failed to save access token.")
-                                    }
-                                    
-                                    let saveRefreshToken = KeychainWrapper.standard.set(refreshToken, forKey: "refreshToken")
-                                    if saveRefreshToken {
-                                        print("RefreshToken: \(refreshToken)")
-                                        print("Refresh token saved successfully.")
-                                    } else {
-                                        print("Failed to save refresh token.")
-                                    }
-                                } else {
-                                    print("Failed to retrieve tokens from the response.")
-                                }
-                            } else {
-                                
-                                if let message = json["message"] as? String {
-                                    print("Message: \(message)")
-                                    // Show message to the user or take appropriate action
-                                }
-                            }
-                        }
-                    }
-                    
-                case .failure(let error):
-                    print("Error sending POST request: \(error)")
-                    // Handle failure case
+                } else {
+                    print("응답 데이터 없음")
                 }
+            case .requestErr(let StatusResponse):
+                print("요청 에러: \(StatusResponse.message)")
+            case .pathErr:
+                print("경로 에러")
+            case .serverErr:
+                print("서버 에러")
+            case .networkErr:
+                print("네트워크 에러")
+            case .failure:
+                print("요청 실패")
             }
+        }
     }
     @objc func nextButtonTapped() {
         guard let phoneNumber = phoneNumberTextField.text else {
             return
         }
-        //유저가 존재할 경우
-        fetchData()
-        
+        verificationSuccessful()
+        checkPhoneNumber()
         if isValidPhoneNumber(phoneNumber) {
             // 전화번호가 유효한 경우
-            verificationSuccessful()
-            
             if KeychainHandler.shared.accessToken.isEmpty {
-                //유저가 존재하지 않을 경우
                 SignDataManager.shared.phoneNumber = phoneNumber
+                
                 let birthVC = BirthDateSettingViewController()
                 navigationController?.pushViewController(birthVC, animated: true)
-                
             } else {
                 //유저가 존재할 경우
-                fetchData()
+                getUserInfo()
                 let tabVC = TabBarController()
                 self.changeRootViewController(rootViewController: tabVC)
+                
             }
         } else {
             // 전화번호가 유효하지 않은 경우

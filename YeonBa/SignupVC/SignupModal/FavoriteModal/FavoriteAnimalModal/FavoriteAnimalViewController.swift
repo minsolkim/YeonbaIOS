@@ -13,9 +13,11 @@ protocol FavoriteAnimalViewControllerDelegate: AnyObject {
 }
 
 final class FavoriteAnimalViewController: UIViewController {
+    
     private var selectedMode: AnimalMode?
     weak var delegate: FavoriteAnimalViewControllerDelegate?
-    
+    private var bodyViewMode: SignWeightMode = .empty
+    private var locationViewMode: SignLocationMode = .empty
     private let customTransitioningDelegate = FavoriteAnimalDelegate()
     private let titleLabel = UILabel().then {
         $0.text = "선호하는 동물 상"
@@ -64,6 +66,7 @@ final class FavoriteAnimalViewController: UIViewController {
         $0.setTitleColor(UIColor.white, for: .normal)
         $0.layer.masksToBounds = true
         $0.layer.cornerRadius = 20
+        $0.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
     }
     
     init(passMode: AnimalMode) {
@@ -111,6 +114,15 @@ final class FavoriteAnimalViewController: UIViewController {
         self.dismiss(animated: true)
         
     }
+    
+    @objc private func nextButtonTapped() {
+        dismiss(animated: true) {
+            let locationVC = FavoriteLocationViewController(passMode: self.locationViewMode)
+            // 새로운 모달 창 표시
+            self.present(locationVC, animated: true)
+        }
+    }
+    
     private func updateButtonSelection() {
         // 모든 버튼의 선택 상태 초기화
         for case let horizontalStackView as UIStackView in verticalStackView.arrangedSubviews {

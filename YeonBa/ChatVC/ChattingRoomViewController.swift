@@ -1,66 +1,22 @@
+//
+//  ChattingRoomViewController.swift
+//  YeonBa
+//
+//  Created by 김민솔 on 5/15/24.
+//
+
 import UIKit
 import SnapKit
 import Then
 
-struct ChatMessage {
-    var sender: Sender
-    var message: String
-    var date: Date
-}
-
-// 채팅 메시지를 날짜별로 분류한 구조체
-struct ChatSection {
-    var date: Date
-    var messages: [ChatMessage]
-}
-
-enum Sender {
-    case me
-    case other
-}
-
 class ChattingRoomViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
-        
+    
     var messagesDateString = "yyyy년 MM월 dd일"
     var messages: [ChatMessage] = [] // 채팅 데이터를 저장할 배열
     // 날짜별로 섹션화된 채팅 데이터
     var chatSections: [ChatSection] = []
-    
+    var sendView = SendView()
     //MARK: - UI Components
-    let titleLabel = UILabel().then{
-        $0.text = "박원빈"
-        $0.font = UIFont.pretendardMedium(size: 18)
-    }
-    let backButton = UIButton(type: .system).then {
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .light)
-        let image = UIImage(named: "BackButton")
-        $0.setImage(image, for: .normal)
-        $0.tintColor = UIColor.black
-        $0.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-    }
-    let galleryButton = UIButton().then {
-        $0.setImage(UIImage(named: "GalleryIcon"), for: .normal) // 갤러리 아이콘 이미지 설정
-        $0.contentMode = .scaleAspectFit
-    }
-    
-    let messageTextField = UITextField().then {
-        $0.placeholder = "메시지 보내기"
-        $0.borderStyle = .none
-        $0.backgroundColor = .gray2
-        $0.textColor = .customgray4
-        $0.font = UIFont.pretendardRegular(size: 13)
-        $0.layer.cornerRadius = 20
-        $0.layer.masksToBounds = true
-        $0.textAlignment = .left
-        $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 15, height: $0.frame.height))
-        $0.leftViewMode = .always
-        $0.rightView = UIView(frame: CGRect(x: 0, y: 0, width: 40, height: 40)) // sendButton의 width와 동일하게 설정
-        $0.rightViewMode = .always
-    }
-    let sendButton = UIButton().then {
-        $0.setImage(UIImage(named: "SendIcon"), for: .normal) // 전송 아이콘 이미지 설정
-        $0.contentMode = .scaleAspectFit
-        }
     lazy var tableView = UITableView(frame: .zero, style: .grouped).then{
         $0.register(MyMessageCell.self, forCellReuseIdentifier: "MyMessageCell")
         $0.register(OtherMessageCell.self, forCellReuseIdentifier: "OtherMessageCell")
@@ -82,65 +38,45 @@ class ChattingRoomViewController: UIViewController, UITableViewDataSource, UITab
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        navigationItem.title = "변우석"
         addSubViews()
         configUI()
         loadChatData() // 가짜 데이터 로드 함수
+        tabBarController?.tabBar.isTranslucent = true
         
     }
     override func viewWillAppear(_ animated: Bool) {
-         super.viewWillAppear(animated)
-         self.navigationItem.hidesBackButton = true
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = true
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tabBarController?.tabBar.isHidden = false
+    
     }
     
     // MARK: - UI Layout
     func addSubViews(){
-        view.addSubview(titleLabel)
-        view.addSubview(backButton)
-        view.addSubview(galleryButton)
-        view.addSubview(messageTextField)
-        view.addSubview(sendButton)
+        view.addSubview(sendView)
         view.addSubview(tableView)
     }
     func configUI() {
-        backButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(55)
-            make.leading.equalToSuperview().offset(21)
-        }
-        
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(55)
-            make.centerX.equalToSuperview()
-        }
-        galleryButton.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(20)
-            make.bottom.equalToSuperview().offset(-62)
-            make.width.height.equalTo(26) // 아이콘 크기
-        }
-        messageTextField.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(60)
-            make.trailing.equalToSuperview().offset(-20)
-            make.bottom.equalToSuperview().offset(-55)
-            make.height.equalTo(40)
-        }
-        
-        sendButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-35)
-            make.centerY.equalTo(messageTextField.snp.centerY)
-            make.width.height.equalTo(20) // 아이콘 크기
+        sendView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
+            make.height.equalTo(100)
         }
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(21)
+            make.top.equalToSuperview()
             make.left.right.equalToSuperview()
-            make.bottom.equalToSuperview().offset(-105)
+            make.bottom.equalTo(sendView.snp.top)
         }
-        
-        
     }
     
     func loadChatData() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy년 MM월 dd일"
-        let dates = ["2024년 04월 03일", "2024년 04월 04일"].compactMap { dateFormatter.date(from: $0) }
+        let dates = ["2024년 05월 15일", "2024년 06월 10일"].compactMap { dateFormatter.date(from: $0) }
         
         // 가짜 데이터 생성
         for date in dates {
@@ -170,7 +106,7 @@ class ChattingRoomViewController: UIViewController, UITableViewDataSource, UITab
         case .other:
             let cell = tableView.dequeueReusableCell(withIdentifier: "OtherMessageCell", for: indexPath) as! OtherMessageCell
             cell.messageLabel.text = chatMessage.message
-            cell.profileImageView.image = UIImage(named: "GuideGoodImage1")
+            cell.profileImageView.image = UIImage(named: "woosuck")
             // 날짜 설정, 셀 스타일링 등
             return cell
         }

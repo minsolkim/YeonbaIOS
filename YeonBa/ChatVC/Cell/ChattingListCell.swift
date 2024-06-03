@@ -5,13 +5,13 @@ import Then
 class ChattingListCell: UITableViewCell {
     //MARK: - UI Components
     let profileImageView = UIImageView().then{
-        $0.image = UIImage(named: "GuideGoodImage1")
+        $0.image = UIImage(named: "woosuck")
         $0.layer.cornerRadius = 25
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
     }
     let nameLabel = UILabel().then{
-        $0.text = "박원빈"
+        $0.text = "변우석"
         $0.font = UIFont.pretendardSemiBold(size: 18)
     }
     let messegeLabel = UILabel().then{
@@ -44,12 +44,9 @@ class ChattingListCell: UITableViewCell {
     
     //MARK: - UI Layout
     func addSubViews() {
-        contentView.addSubview(profileImageView)
-        contentView.addSubview(nameLabel)
-        contentView.addSubview(messegeLabel)
-        contentView.addSubview(timeLabel)
-        contentView.addSubview(alarmIcon)
-    }
+        contentView.addSubviews(profileImageView,nameLabel,messegeLabel,timeLabel,alarmIcon)
+        
+        }
     
     func configUI() {
         profileImageView.snp.makeConstraints { make in
