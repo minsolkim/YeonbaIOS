@@ -8,7 +8,7 @@
 import Foundation
 
 struct NotificationDataResponse: Codable {
-    let nofications: [Notification]
+    let notifications: [Notifications]
     let totalPages: Int
     let totalElements: Int
     let isFirst: Bool

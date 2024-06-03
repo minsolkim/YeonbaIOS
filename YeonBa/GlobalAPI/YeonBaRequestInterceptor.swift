@@ -51,18 +51,22 @@ final class YeonBaRequestInterceptor: RequestInterceptor {
     
     func refreshToken(completion: @escaping (Bool) -> Void) {
         print("토큰 재발급 시작")
-//        NetworkService.shared.loginService.postRefreshToken(){ [weak self] result in
+//        NetworkService.shared.signUpService.postRefreshToken() { [weak self] result in
 //            guard let self else {return}
 //            switch result {
 //            case .success(let data):
-//                /// 토큰 재발급에 성공하여 다시 저장.
-//                guard let data = data.data else { return }
-//                print("리프레쉬 토큰을 사용하여 토큰을 재발행하여 저장했습니다. ✅")
-//                KeychainHandler.shared.refreshToken = data.refreshToken
-//                //JWT 토큰
-//                completion(true)
-//                return
-//                
+//                if data.code == 200 {
+//                    /// 토큰 재발급에 성공하여 다시 저장.
+//                    guard let data = data.data else { return }
+//                    print("리프레쉬 토큰을 사용하여 토큰을 재발행하여 저장했습니다. ✅")
+//                    KeychainHandler.shared.refreshToken = data.refreshToken
+//                    KeychainHandler.shared.accessToken = data.accessToken
+//                    completion(true)
+//                    return
+//                } else if data.code == 404 {
+//                    print("이미 탈퇴한 사용자로 찾을 수 없습니다.❌")
+//                    self.logout()
+//                }
 //            case .failure:
 //                self.logout()
 //            default:
@@ -70,14 +74,6 @@ final class YeonBaRequestInterceptor: RequestInterceptor {
 //                self.logout()
 //            }
 //        }
-    }
-    
-    func logout() {
-        //토큰 초기화 이후 로그인 화면 이동
-        DispatchQueue.main.async {
-            guard let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate else { return }
-            sceneDelegate.window?.rootViewController = BaseNavigationController(rootViewController: SignUpViewController())
-        }
     }
     
 

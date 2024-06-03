@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import Alamofire
 import SwiftKeychainWrapper
+
 class SplashViewController: UIViewController {
     let signUpViewController = SignUpViewController()
     let tabbarController = TabBarController()
@@ -56,6 +57,7 @@ class SplashViewController: UIViewController {
         gradientLayer.frame = CGRect(x: 0, y: -UIApplication.shared.statusBarFrame.height, width: view.bounds.width, height: view.bounds.height + UIApplication.shared.statusBarFrame.height)
         setViews()
         branchProcessing()
+        getUserInfo()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -68,43 +70,90 @@ class SplashViewController: UIViewController {
         sceneDelegate.window?.rootViewController = BaseNavigationController(rootViewController: rootViewController)
         navigationController?.popToRootViewController(animated: true)
     }
+    
     func branchProcessing() {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5 ) {
-            //SignDataManager.shared.clearAll()
-            getUserInfo()
-            self.changeRootViewController(rootViewController: self.tabbarController)
             print("accesstoken:\(KeychainHandler.shared.accessToken)")
-            print("refreshToken:\(KeychainHandler.shared.refreshToken)")
             //회원이 아닌 유저일 경우
-//            if KeychainHandler.shared.accessToken.isEmpty {
-//                //어세스 토큰이 없는 경우
-//                self.changeRootViewController(rootViewController: self.signUpViewController)
-//            } else { //이미 가입된 유저일 경우
-//                //어세스 토큰이 존재하는 경우
-//                getUserInfo()
-//                self.changeRootViewController(rootViewController: self.tabbarController)
-//            }
+            if KeychainHandler.shared.accessToken.isEmpty {
+                //어세스 토큰이 없는 경우
+                self.changeRootViewController(rootViewController: self.signUpViewController)
+            } else { //이미 가입된 유저일 경우
+                //어세스 토큰이 존재하는 경우
+                self.changeRootViewController(rootViewController: self.tabbarController)
+            }
         }
-        // MARK: Network Function
-        func getUserInfo() {
-            let loginRequest = LoginRequest (
-                socialId : SignDataManager.shared.socialId!,
-                loginType : SignDataManager.shared.loginType!,
-                phoneNumber :SignDataManager.shared.phoneNumber!
-            )
-            NetworkService.shared.loginService.login(bodyDTO: loginRequest) { [weak self] response in
-                guard let self = self else { return }
-                switch response {
-                case .success(let data):
-                    guard let data = data.data else { return }
-                    print("로그인 성공")
-                default:
-                    print("로그인 실패")
+    }
+    private func updateDeviceTokenOnServer(deviceToken: String) {
+        guard let url = URL(string: "https://api.yeonba.co.kr/users/device-token") else { return }
+        let headers: HTTPHeaders = [
+            "Content-Type": "application/json",
+            "Authorization": "Bearer \(KeychainHandler.shared.accessToken)"
+        ]
+        
+        let parameters: [String: Any] = ["deviceToken": deviceToken]
+        
+        AF.request(url, method: .patch, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            .responseJSON { response in
+                switch response.result {
+                case .success(let value):
+                    if let httpResponse = response.response, httpResponse.statusCode == 200 {
+                        print("Device token updated successfully.")
+                    } else {
+                        print("Failed to update device token. Status code: \(response.response?.statusCode ?? 0)")
+                        print("Response data: \(value)")
+                    }
+                case .failure(let error):
+                    print("Error updating device token: \(error.localizedDescription)")
                 }
+            }
+    }
+    // MARK: Network Function
+    func getUserInfo() {
+        guard let socialId = SignDataManager.shared.socialId,
+              let loginType = SignDataManager.shared.loginType,
+              let phoneNumber = SignDataManager.shared.phoneNumber else {
+            print("필수 데이터가 없습니다.")
+            return
+        }
+        let loginRequest = LoginRequest (
+            socialId : socialId,
+            loginType : loginType,
+            phoneNumber : phoneNumber
+        )
+        NetworkService.shared.loginService.login(bodyDTO: loginRequest) { [weak self] response in
+            guard let self = self else { return }
+            switch response {
+            case .success(let data):
+                guard let data = data.data else { return }
+                print("로그인 성공")
+                
+                // AccessToken 및 RefreshToken 저장
+                KeychainHandler.shared.accessToken = data.accessToken
+                KeychainHandler.shared.refreshToken = data.refreshToken
+                let jwt = JWT(token: data.accessToken)
+                if let userId = jwt?.userId {
+                    KeychainHandler.shared.kakaoUserID = jwt?.userId ?? 0
+                    print("유저 아이디\(KeychainHandler.shared.kakaoUserID)")
+                } else {
+                    
+                }
+                // AccessToken이 제대로 설정되었을 때에만 Authorization 헤더 설정
+                if !data.accessToken.isEmpty {
+                    NetworkService.shared.setAuthorizationHeader(token: data.accessToken)
+                    let deviceToken = KeychainHandler.shared.deviceToken
+                    self.updateDeviceTokenOnServer(deviceToken: deviceToken)
+                    print("device token: \(KeychainHandler.shared.deviceToken)")
+                    
+                }
+                
+            default:
+                print("로그인 실패")
                 
             }
         }
     }
+    
 }
 
 extension SplashViewController {

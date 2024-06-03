@@ -12,6 +12,8 @@ import Alamofire
 enum NotificationTarget {
     case unread
     case watchIng(_ queryDTO: NotificationPageRequest)
+    case chatAccept(_ queryDTO: NotificationIdRequest)
+    case permission
 }
 
 extension NotificationTarget: TargetType {
@@ -22,6 +24,10 @@ extension NotificationTarget: TargetType {
             return .get
         case .watchIng:
             return .patch
+        case .chatAccept:
+            return .post
+        case .permission:
+            return .get
         }
     }
     var path: String {
@@ -30,6 +36,10 @@ extension NotificationTarget: TargetType {
             return "/users/notifications/unread/exists"
         case .watchIng:
             return "/users/notifications"
+        case let .chatAccept(queryDTO):
+            return "notifications/\(queryDTO.notificationId)/chat"
+        case .permission:
+            return "/users/notifications/permissions"
         }
         
     }
@@ -40,15 +50,23 @@ extension NotificationTarget: TargetType {
             return .requestPlain
         case let .watchIng(queryDTO):
             return .requestQuery(queryDTO)
+        case let .chatAccept(queryDTO):
+            return .requestQuery(queryDTO)
+        case .permission:
+            return .requestPlain
         }
     }
     
     var headerType: HTTPHeaderType {
         switch self  {
         case .unread:
-            return .providerToken
+            return .hasToken
         case .watchIng:
-            return .providerToken
+            return .hasToken
+        case .chatAccept:
+            return .hasToken
+        case .permission:
+            return .hasToken
         }
     }
     
@@ -57,6 +75,10 @@ extension NotificationTarget: TargetType {
         case .unread:
             return .authorization
         case .watchIng:
+            return .authorization
+        case .chatAccept:
+            return .authorization
+        case .permission:
             return .authorization
         }
     }

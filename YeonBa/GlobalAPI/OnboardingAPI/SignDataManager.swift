@@ -13,6 +13,8 @@ class SignDataManager {
     
     private init() {}
     var selectedImages: [UIImage] = []
+    var essentialImage : UIImage = UIImage()
+    var placeholderImage : UIImage = UIImage()
     var profilePhotos : [Data]? = []
     var selfieImage : UIImage = UIImage()
     
@@ -315,8 +317,8 @@ class SignDataManager {
             }
         }
     }
-//    func clearAll() {
-//        KeychainWrapper.standard.removeAllKeys()
-//    }
+    func clearAll() {
+        KeychainWrapper.standard.removeAllKeys()
+    }
     
 }

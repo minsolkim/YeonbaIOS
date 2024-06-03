@@ -10,7 +10,7 @@ import Alamofire
 
 protocol SignUpServiceProtocol {
     func nicknameCheck(queryDTO: NicknameRequest, completion: @escaping (NetworkResult<StatusResponse<NicknameResponse>>) -> Void)
-    func signUp(bodyDTO: SignUpRequest, completion: @escaping (NetworkResult<BaseResponse<SignUpResponse>>) -> Void)
+    func signUp(bodyDTO: SignUpRequest, completion: @escaping (NetworkResult<StatusResponse<SignUpResponse>>) -> Void)
     func phoneNumberCheck(queryDTO: PhoneNumberRequest,completion: @escaping (NetworkResult<StatusResponse<PhoneNumberResponse>>) -> Void)
 }
 
@@ -23,8 +23,8 @@ final class SignUpService: APIRequestLoader<SignUpTarget>, SignUpServiceProtocol
         fetchData(target: .nicknameCheck(queryDTO), responseData: StatusResponse<NicknameResponse>.self, completion: completion)
     }
     
-    func signUp(bodyDTO: SignUpRequest, completion: @escaping (NetworkResult<BaseResponse<SignUpResponse>>) -> Void) {
+    func signUp(bodyDTO: SignUpRequest, completion: @escaping (NetworkResult<StatusResponse<SignUpResponse>>) -> Void) {
         fetchData(target: .signUp(bodyDTO),
-                  responseData: BaseResponse<SignUpResponse>.self, completion: completion)
+                  responseData: StatusResponse<SignUpResponse>.self, completion: completion)
     }
 }

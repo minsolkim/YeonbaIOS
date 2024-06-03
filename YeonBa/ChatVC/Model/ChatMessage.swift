@@ -9,7 +9,16 @@ import Foundation
 import UIKit
 
 struct ChatMessage {
-    var sender: Sender
-    var message: String
-    var date: Date
+    let content: String
+    let userId: Int
+    let sentAt: String
+    let userName: String
+
+    init(content: String, userId: Int, sentAt: String, userName: String) {
+        self.content = content
+        self.userId = userId
+        self.sentAt = sentAt
+        self.userName = userName
+    }
 }
+

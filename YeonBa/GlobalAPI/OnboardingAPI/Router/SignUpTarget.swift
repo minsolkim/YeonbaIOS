@@ -14,7 +14,7 @@ enum SignUpTarget {
     case phoneNumberCheck(_ queryDTO: PhoneNumberRequest)
     case nicknameCheck(_ queryDTO: NicknameRequest)
     case login(_ bodyDTO: LoginRequest)
-    case postRefreshToken(_ queryDTO: RefreshRequest)
+    case postRefreshToken(_ bodyDTO: RefreshRequest)
 }
 
 extension SignUpTarget: TargetType {
@@ -62,8 +62,8 @@ extension SignUpTarget: TargetType {
             return .requestQuery(queryDTO)
         case let .login(bodyDTO):
             return .requestWithBody(bodyDTO)
-        case let .postRefreshToken(queryDTO):
-            return .requestQuery(queryDTO)
+        case let .postRefreshToken(bodyDTO):
+            return .requestWithBody(bodyDTO)
         }
     }
     
@@ -76,7 +76,7 @@ extension SignUpTarget: TargetType {
         case .nicknameCheck:
             return .plain
         case .login:
-            return .providerToken
+            return .hasToken
         case .postRefreshToken:
             return .refreshToken
         }
@@ -91,7 +91,7 @@ extension SignUpTarget: TargetType {
         case .nicknameCheck:
             return .unauthorization
         case .login:
-            return .socialAuthorization
+            return .authorization
         case .postRefreshToken:
             return .reAuthorization
         }
